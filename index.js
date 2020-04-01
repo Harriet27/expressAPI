@@ -31,6 +31,7 @@ app.put('/put', (req,res) => {
     res.status(200).send(`<h1>PUT</h1>`)
 });
 app.delete('/', (req,res) => {
+    console.log(req.delete)
     res.status(200).send(`<h1>DELETE</h1>`)
 });
 
