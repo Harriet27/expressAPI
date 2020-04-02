@@ -2,38 +2,65 @@ const express = require('express');
 const app = express();
 const port = 2000;
 const bodyParser = require('body-parser');
+const fs = require('fs');
 app.use(bodyParser());
 
-app.get('/', (req,res) => {
-    res.status(200).send(`<h1>Welcome to my API</h1>`)
-});
-app.post('/post', (req,res) => {
-    console.log(req.body)
-    /*
-    Axios.post(API_URL, data)
-    req.body => ambil data dari frontend
-    req.params => data dari url endpoint
-    req.query => search
-    */
-   if (req.body.username === 'lian') {
-        res.status(200).send('<h1>Lanjut</h1>')
-    } else {
-        res.status(200).send('<h1>Ga Boleh</h1>')
+let data = [
+    {
+        id : 1,
+        nama : 'apel',
+        harga : 10000
+    },
+    {
+        id : 2,
+        nama : 'jeruk',
+        harga : 20000
+    },
+    {
+        id : 1,
+        nama : 'mangga',
+        harga : 30000
     }
-    res.status(200).send(`<h1>POST</h1>`)
+]
+
+app.get('/testing', (req,res) => {
+    let newData = data;
+    if (req.query.nama) {
+        newData = newData.filter((val) => val.nama.includes(req.query.nama.toLowerCase()));
+    }
+    if (req.query.hargaMin) {
+        newData = newData.filter((val) => val.harga >= req.query.hargaMin);
+    }
+    if (req.query.hargaMax) {
+        newData = newData.filter((val) => val.harga <= req.query.hargaMax);
+    }
+    res.status(200).send(newData);
 });
-app.patch('/patch', (req,res) => {
-    console.log(req.params)
-    res.status(200).send(`<h1>PATCH</h1>`)
+
+app.get('/params/:id', (req,res) => {
+    console.log(typeof(req.params.id));
+    let dataId = data.find((val) => val.id === parseInt(req.params.id));
+    res.status(200).send(dataId);
 });
-app.put('/put', (req,res) => {
-    console.log(req.query)
-    res.status(200).send(`<h1>PUT</h1>`)
+
+app.post('/add-product', (req,res) => {
+    console.log(req.body);
+    data.push(req.body);
+    console.log(data);
+    res.status(200).send(data);
 });
-app.delete('/', (req,res) => {
-    console.log(req.delete)
-    res.status(200).send(`<h1>DELETE</h1>`)
-});
+
+app.post('/try', (req,res) => {
+    let { nama, usia, pekerjaan } = req.body;
+    try {
+        fs.writeFileSync('invoice.txt', `Nama saya ${nama}\nUsia saya ${usia} tahun\nPekerjaan saya sebagai ${pekerjaan}`);
+        let data = fs.readFileSync('invoice.txt', 'utf8');
+        res.status(200).send(data);
+    } catch(err) {
+        fs.unlinkSync('invoice.txt');
+        res.status(500).send(err.message);
+    }
+})
 
 const { userRouter } = require('./router');
 app.use('/users', userRouter);

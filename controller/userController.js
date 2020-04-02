@@ -39,7 +39,7 @@ module.exports = {
     login : (req,res) => {
         let username = req.query.username;
         let password = req.query.password;
-        let login = data.find((val) => val.username===username && val.password===password);
+        let login = data.find((val) => val.username === username && val.password === password);
         if (login) {
             res.status(200).send(login);
         } else {
