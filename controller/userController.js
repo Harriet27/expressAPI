@@ -23,7 +23,7 @@ module.exports = {
         if (byId) {
             res.status(200).send(byId);
         } else {
-            res.status(200).send('No ID Found');
+            res.status(404).send('No ID Found');
         }
     },
     searchByUsername : (req,res) => {
@@ -33,26 +33,33 @@ module.exports = {
         if (searchUser.length > 0) {
             res.status(200).send(searchUser);
         } else {
-            res.status(200).send('No Username Found');
+            res.status(404).send('No Username Found');
         }
     },
     login : (req,res) => {
-        let username = req.query.username;
-        let password = req.query.password;
-        let login = data.find((val) => val.username === username && val.password === password);
-        if (login) {
-            res.status(200).send(login);
+        // let username = req.query.username;
+        // let password = req.query.password;
+        // let login = data.find((val) => val.username === username && val.password === password);
+        // if (login) {
+        //     res.status(200).send(login);
+        // } else {
+        //     res.status(404).send('No Login Data Found');
+        // }
+        let { username, password } = req.body;
+        let user = data.find((val) => val.username === username & val.password === password);
+        if (user) {
+            res.status(200).send(user);
         } else {
-            res.status(200).send('No Login Data Found');
+            res.status(404).send('Not Found');
         }
     },
     searchByRole : (req,res) => {
-        let role = req.query.role;
-        let searchRole = data.filter((val) => val.role.includes(role));
-        if (searchRole.length > 0) {
-            res.status(200).send(searchRole);
+        // let role = req.query.role;
+        let role = data.filter((val) => val.role === req.query.role);
+        if (role) {
+            res.status(200).send(role);
         } else {
-            res.status(200).send('No Role Found');
+            res.status(404).send('No Role Found');
         }
     }
 }
