@@ -6,7 +6,7 @@ module.exports = {
         let sql = `select * from product order by id ${orderBy} limit ${limit} offset ${offset}`;
         db.query(sql, (err,results) => {
             if (err) {
-                res.status(500).send(err.message)
+                res.status(500).send(err.message);
             }
             res.status(200).send(results);
         })
@@ -15,10 +15,10 @@ module.exports = {
         let { name, hargaMin, hargaMax } = req.query;
         let sql = `select * from product where nama like '%${name}%'`;
         if (hargaMin) {
-            sql += ` and harga > ${hargaMin}`
+            sql += ` and harga > ${hargaMin}`;
         }
         if (hargaMax) {
-            sql += ` and harga < ${hargaMax}`
+            sql += ` and harga < ${hargaMax}`;
         }
         db.query(sql, (err,results) => {
             if (err) {
@@ -38,6 +38,7 @@ module.exports = {
             }
             // res.status(200).send(results);
             res.status(200).send({
+                results,
                 status : 'Created',
                 message : 'Data successfully created'
             });
@@ -52,6 +53,7 @@ module.exports = {
                 res.status(500).send(err.message);
             }
             res.status(200).send({
+                results,
                 status : 'Updated',
                 message : 'Data successfully updated'
             });
@@ -65,6 +67,7 @@ module.exports = {
                 res.status(500).send(err.message);
             }
             res.status(200).send({
+                results,
                 status : 'Deleted',
                 message : 'Data successfully deleted'
             });

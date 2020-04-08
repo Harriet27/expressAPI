@@ -64,9 +64,11 @@ app.post('/try', (req,res) => {
 
 const {
     userRouter,
-    productRouter
+    productRouter,
+    cartRouter
 } = require('./router');
 app.use('/users', userRouter);
 app.use('/products', productRouter);
+app.use('/cart', cartRouter);
 
 app.listen(port, () => console.log(`API active at port ${port}`));

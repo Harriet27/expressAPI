@@ -85,22 +85,51 @@ module.exports = {
         })
     },
     RegisterSql : (req,res) => {
-        let { username, password } = req.body;
-        let sql = `insert into users (username, password) values ('${username}', '${password}')`;
-        db.query(sql, (err,results) => {
+        // let { username, password } = req.body;
+        // let sql = `insert into users (username, password) values ('${username}', '${password}')`;
+        // db.query(sql, (err,results) => {
+        //     if (err) {
+        //         res.status(404).send(err.message);
+        //     }
+        //     if (results.length !== 0) {
+        //         res.status(200).send({
+        //             status : 'Registered',
+        //             message : 'Register Successfully'
+        //         });
+        //     } else {
+        //         res.status(404).send({
+        //             status : 'Register Fail',
+        //             message : 'Both input box must be filled!'
+        //         });
+        //     }
+        // })
+        let { username } = req.body;
+        let sql = `select * from users where username = '${username}'`;
+        db.query(sql, (err,get) => {
             if (err) {
-                res.status(404).send(err.message);
+                res.status(500).send(err.message);
             }
-            if (results.length !== 0) {
+            if (get.length !== 0) {
                 res.status(200).send({
-                    status : 'Registered',
-                    message : 'Register Successfully'
+                    status : 'Failed',
+                    message : 'Username Already Taken'
                 });
             } else {
-                res.status(404).send({
-                    status : 'Register Fail',
-                    message : 'Both input box must be filled!'
-                });
+                let sql = `insert into users set ?`;
+                db.query(sql, req.body, (err,insert) => {
+                    if (err) {
+                        res.status(500).send(err.message);
+                    }
+                    // res.status(200).send(insert);
+                    let sql = `select * from users where id = ${insert.insertId}`;
+                    db.query(sql, (err,results) => {
+                        if (err) {
+                            res.status(500).send(err.message);
+                        }
+                        res.status(200).send(results[0]);
+                        
+                    })
+                })
             }
         })
     }
